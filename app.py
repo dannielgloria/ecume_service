@@ -36,7 +36,22 @@ def get_tokenLogin():
     resp.status_code=200
     return resp
 
-
+@app.route('/apiECUME/recoverPwd', methods=['GET'])
+def get_recoverPassword():
+    json_data = request.get_json()
+    phone = json_data['Phone']
+    phone = re.sub(r"[a-zA-Z . +-]+", "" ,phone)
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute('SELECT Password FROM User WHERE Phone = %s ;', (phone))
+    rows = cur.fetchall()
+    resp = jsonify(rows)
+    resp.status_code=200
+    if resp == '[ ]':
+        resp = "Numero no encontrado"
+    else:
+        resp = "resp['Password']"
+    return resp
 
 
 
