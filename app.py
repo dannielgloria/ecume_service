@@ -56,8 +56,7 @@ def get_recoverPassword():
 
 @app.route('/apiECUME/userRegister', methods=['PUT'])
 def put_userRegister():
-    json_data = request.get_json()
-    token = 
+    json_data = request.get_json() 
     names = json_data['Names']
     surnames = json_data['Surnames']
     password = json_data['Password']
@@ -69,6 +68,7 @@ def put_userRegister():
     yearBirth = json_data['YearBirth']
     gender = json_data['Gender']
     bloodbPressure = json_data['BloodPresure']
+    token = hashlib.md5(names+email).digest()
     #* Phyisical handicap
     pH0 = json_data['Answer1']
     pH1 = json_data['Answer2']
