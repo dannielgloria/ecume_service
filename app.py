@@ -36,7 +36,7 @@ def get_tokenLogin():
     password = json_data['Password']
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute('SELECT Token, FROM User WHERE Email = %s AND Password = %s ;', (email,password))
+    cur.execute('SELECT token, trainingGroup FROM User WHERE Email = %s AND Password = %s ;', (email,password))
     rows = cur.fetchall()
     resp = jsonify(rows)
     resp.status_code=200
@@ -173,7 +173,23 @@ def put_userRegister():
         resp = jsonify(cur.rowcount)
         resp.status_code=200
         return resp
-
+    
+@app.route('/apiECUME/deleteUser', methods=['DELETE'])
+def delete_deleteUser():
+    json_data = request.get_json()
+    email = json_data['Email']
+    conn = mysql.connect()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute('DELETE FROM AttitudeToExercise WHERE email= %s ;', (email))
+    cur.execute('DELETE FROM PhysicalHandicap WHERE email= %s ;', (email))
+    cur.execute('DELETE FROM PersonalHistory WHERE email= %s ;', (email))
+    cur.execute('DELETE FROM Lifestyle WHERE email= %s ;', (email))
+    cur.execute('DELETE FROM User WHERE email= %s ;', (email))
+    rows = cur.fetchall()
+    resp = jsonify(rows)
+    resp.status_code=200
+    resp = 'User was successfully deleted'
+    return resp
 
 if __name__ == '__main__':
     app.run(port=PORT, debug=DEBUG)
