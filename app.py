@@ -1,14 +1,20 @@
 import re
 import json
+import random
 import pymysql
+from hashlib import blake2b
+from flask_cors import CORS
 from flask import Flask, request, flash, jsonify
 from flaskext.mysql import MySQL
+
 
 # FLASK Instance my application
 app = Flask(__name__)
 PORT = 5000
-DEBUG = False
+DEBUG = True
 mysql = MySQL()
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
+SECRET_KEY=b'3ai6lGjrF*hxy?yzpXN7z*WMnO9rejw7'
 
 ##
 # Generating the configuration to the connection to the DB
@@ -67,8 +73,11 @@ def put_userRegister():
     weight = json_data['Weight']
     yearBirth = json_data['YearBirth']
     gender = json_data['Gender']
-    bloodbPressure = json_data['BloodPresure']
-    token = hashlib.md5(names+email).digest()
+    bloodPressure = json_data['BloodPresure']
+    h = blake2b(key=SECRET_KEY, digest_size=16)
+    h.update(str.encode(names+surnames+email))
+    # naMail= names+email+str(random.randint(10000, 1000000))
+    token = str(h.hexdigest())
     #* Phyisical handicap
     pH0 = json_data['Answer1']
     pH1 = json_data['Answer2']
@@ -93,7 +102,7 @@ def put_userRegister():
     hyperthyroidism = json_data['Hyperthyroidism']
     hypothyroidism = json_data['Hypothyroidism']
     otherDisease = json_data['OtherDisease']
-    surgicalInterventions = json_data['surgicalInterventions'] 
+    surgicalInterventions = json_data['SurgicalInterventions'] 
     fractures = json_data['Fractures']
     hospitalization = json_data['Hospitalization']
     #* Lifestyle
@@ -106,9 +115,12 @@ def put_userRegister():
     physicalActivity = json_data['PhysicalActivity']
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    if ((pH0 = 0) and (pH1 = 0) and (pH2 = 0) and (pH3 = 0) and (pH4 = 0) and (pH5 = 0) and (pH6 = 0) and (activityLevel = 1 or activityLevel = 2) and ((noActivity = 1 or ( lowActivity = 1 or lowActivity = 2)) and (surgicalInterventions = 0) and (fractures = 0) and (hospitalization = 1) and (tobaccoConsumption = 1) and (alcoholConsumption = 0) and (numberOfMeals = 2) and (physicalActivity = 0)):
+    phS = (pH0+pH1+pH2+pH3+pH4+pH5+pH6)
+    fS = (activityLevel+noActivity+lowActivity+highActivity+surgicalInterventions+fractures+hospitalization+tobaccoConsumption+alcoholConsumption+numberOfMeals+physicalActivity)
+    nD = (diabetes+hypertension+heartDisease+kidneyDisease+respiratoryDisease+jointDisease+allergies+hyperthyroidism+hypothyroidism+otherDisease)
+    if ( ((phS == 0) and (fS >= 5 and fS <= 7)) and (nD >= 3)):
         group = 1
-        cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
+        cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, trainingGroups) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
         cur.execute('INSERT INTO Lifestyle (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity))
         cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
         cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
@@ -117,50 +129,50 @@ def put_userRegister():
         resp = jsonify(cur.rowcount)
         resp.status_code=200
         return resp
-        elif ((pH0 = 0) and (pH1 = 0) and (pH2 = 0) and (pH3 = 0) and (pH4 = 0) and (pH5 = 0) and (pH6 = 0) and (activityLevel = 3 or activityLevel = 4) and (lowActivity = 3 or lowActivity = 4) and  (surgicalInterventions = 0) and (fractures = 0) and (hospitalization = 0) and (tobaccoConsumption = 0) and (alcoholConsumption = 0) and (numberOfMeals = 3) and (physicalActivity = 2)):
-            group = 2
-            cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
-            cur.execute('INSERT INTO Lifestyle (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity))
-            cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
-            cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
-            cur.execute('INSERT INTO PhysicalHandicap (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6))
-            conn.commit()
-            resp = jsonify(cur.rowcount)
-            resp.status_code=200
-            return resp
-            elif ((pH0 = 0) and (pH1 = 0) and (pH2 = 0) and (pH3 = 0) and (pH4 = 0) and (pH5 = 0) and (pH6 = 0) and (activityLevel = 5 or activityLevel = 6) and ((highActivity = 5 or highActivity = 6) or (highActivity = 7)) and (surgicalInterventions = 0) and (fractures = 0) and (hospitalization = 0) and (tobaccoConsumption = 0) and (alcoholConsumption = 0) and (numberOfMeals = 4) and (physicalActivity = 1)):
-                group = 3
-                cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
-                cur.execute('INSERT INTO Lifestyle (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity))
-                cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
-                cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
-                cur.execute('INSERT INTO PhysicalHandicap (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6))
-                conn.commit()
-                resp = jsonify(cur.rowcount)
-                resp.status_code=200
-                return resp
-                elif ((((pH0 = 1) or (pH3 = 1)) or (pH5 = 1)) and (activityLevel = 1 or activityLevel = 2) and (noActivity = 1) and  (surgicalInterventions = 1) and (fractures = 1) and (hospitalization = 1) and (tobaccoConsumption = 1) and (alcoholConsumption = 1) and (numberOfMeals = 2) and (physicalActivity = 0)):
-                    group = 4
-                    cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
-                    cur.execute('INSERT INTO Lifestyle (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity))
-                    cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
-                    cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
-                    cur.execute('INSERT INTO PhysicalHandicap (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6))
-                    conn.commit()
-                    resp = jsonify(cur.rowcount)
-                    resp.status_code=200
-                    return resp
-                else:
-                    group = 5
-                    cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
-                    cur.execute('INSERT INTO Lifestyle (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity))
-                    cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
-                    cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
-                    cur.execute('INSERT INTO PhysicalHandicap (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6))
-                    conn.commit()
-                    resp = jsonify(cur.rowcount)
-                    resp.status_code=200
-                    return resp
+    elif (((phS == 0) and (fS >= 11 and fS <= 13)) and (nD >= 2 and nD <= 3)):
+        group = 2
+        cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, trainingGroups) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
+        cur.execute('INSERT INTO Lifestyle (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity))
+        cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
+        cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
+        cur.execute('INSERT INTO PhysicalHandicap (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6))
+        conn.commit()
+        resp = jsonify(cur.rowcount)
+        resp.status_code=200
+        return resp
+    elif (((phS == 0) and (fS >= 15 and fS <= 18)) and (nD >= 2 and nD <= 3)):
+        group = 3
+        cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, trainingGroups) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
+        cur.execute('INSERT INTO Lifestyle (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity))
+        cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
+        cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
+        cur.execute('INSERT INTO PhysicalHandicap (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6))
+        conn.commit()
+        resp = jsonify(cur.rowcount)
+        resp.status_code=200
+        return resp
+    elif (phS != 0):
+        group = 4
+        cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, trainingGroups) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
+        cur.execute('INSERT INTO Lifestyle (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity))
+        cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
+        cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
+        cur.execute('INSERT INTO PhysicalHandicap (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6))
+        conn.commit()
+        resp = jsonify(cur.rowcount)
+        resp.status_code=200
+        return resp
+    else:
+        group = 5
+        cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, trainingGroups) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
+        cur.execute('INSERT INTO Lifestyle (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity))
+        cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
+        cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
+        cur.execute('INSERT INTO PhysicalHandicap (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6))
+        conn.commit()
+        resp = jsonify(cur.rowcount)
+        resp.status_code=200
+        return resp
 
 
 if __name__ == '__main__':
