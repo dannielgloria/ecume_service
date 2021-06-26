@@ -128,6 +128,7 @@ def put_userRegister():
         conn.commit()
         resp = jsonify(cur.rowcount)
         resp.status_code=200
+        resp = 'User was successfully registered'
         return resp
     elif (((phS == 0) and (fS >= 11 and fS <= 13)) and (nD >= 2 and nD <= 3)):
         group = 2
@@ -139,6 +140,7 @@ def put_userRegister():
         conn.commit()
         resp = jsonify(cur.rowcount)
         resp.status_code=200
+        resp = 'User was successfully registered'
         return resp
     elif (((phS == 0) and (fS >= 15 and fS <= 18)) and (nD >= 2 and nD <= 3)):
         group = 3
@@ -150,6 +152,7 @@ def put_userRegister():
         conn.commit()
         resp = jsonify(cur.rowcount)
         resp.status_code=200
+        resp = 'User was successfully registered'
         return resp
     elif (phS != 0):
         group = 4
@@ -161,6 +164,7 @@ def put_userRegister():
         conn.commit()
         resp = jsonify(cur.rowcount)
         resp.status_code=200
+        resp = 'User was successfully registered'
         return resp
     else:
         group = 5
@@ -172,6 +176,7 @@ def put_userRegister():
         conn.commit()
         resp = jsonify(cur.rowcount)
         resp.status_code=200
+        resp = 'User was successfully registered'
         return resp
     
 @app.route('/apiECUME/deleteUser', methods=['DELETE'])
@@ -185,8 +190,8 @@ def delete_deleteUser():
     cur.execute('DELETE FROM PersonalHistory WHERE email= %s ;', (email))
     cur.execute('DELETE FROM Lifestyle WHERE email= %s ;', (email))
     cur.execute('DELETE FROM User WHERE email= %s ;', (email))
-    rows = cur.fetchall()
-    resp = jsonify(rows)
+    conn.commit()
+    resp = jsonify(cur.rowcount)
     resp.status_code=200
     resp = 'User was successfully deleted'
     return resp
