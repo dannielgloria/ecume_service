@@ -37,7 +37,7 @@ def get_tokenLogin():
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute('SELECT token FROM User WHERE Email = %s AND Password = %s ;', (email,password))
-    rows = cur.fetchall()
+    rows = cur.fetchone()
     resp = jsonify(rows)
     resp.status_code=200
     return resp
