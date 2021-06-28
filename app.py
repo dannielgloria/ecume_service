@@ -29,7 +29,7 @@ app.config['MYSQL_DATABASE_HOST'] = 'www.taquitosoftware.com.mx'
 mysql.init_app(app)
 
 #* This endpoint obtains the record by shaCotejo
-@app.route('/apiECUME/login', methods=['GET'])
+@app.route('/apiECUME/login', methods=['POST'])
 def get_tokenLogin():
     json_data = request.get_json()
     email = json_data['email']
