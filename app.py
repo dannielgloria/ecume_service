@@ -60,59 +60,59 @@ def get_recoverPassword():
         return resp
     
 
-@app.route('/apiECUME/userRegister', methods=['PUT'])
+@app.route('/apiECUME/userRegister', methods=['POST'])
 def put_userRegister():
     json_data = request.get_json() 
-    names = json_data['Names']
-    surnames = json_data['Surnames']
-    password = json_data['Password']
-    email = json_data['Email']
-    phone = json_data['Phone']
+    names = json_data['names']
+    surnames = json_data['surnames']
+    password = json_data['password']
+    email = json_data['email']
+    phone = json_data['phone']
     phone = re.sub(r"[a-zA-Z . +-]+", "" ,phone)
-    height = json_data['Height']
-    weight = json_data['Weight']
-    yearBirth = json_data['YearBirth']
-    gender = json_data['Gender']
-    bloodPressure = json_data['BloodPresure']
+    height = json_data['height']
+    weight = json_data['weight']
+    yearBirth = json_data['yearBirth']
+    gender = json_data['gender']
+    bloodPressure = json_data['bloodPresure']
     h = blake2b(key=SECRET_KEY, digest_size=16)
     h.update(str.encode(names+surnames+email))
     # naMail= names+email+str(random.randint(10000, 1000000))
     token = str(h.hexdigest())
     #* Phyisical handicap
-    pH0 = json_data['Answer1']
-    pH1 = json_data['Answer2']
-    pH2 = json_data['Answer3']
-    pH3 = json_data['Answer4']
-    pH4 = json_data['Answer5']
-    pH5 = json_data['Answer6']
-    pH6 = json_data['Answer7']
+    pH0 = json_data['answer1']
+    pH1 = json_data['answer2']
+    pH2 = json_data['answer3']
+    pH3 = json_data['answer4']
+    pH4 = json_data['answer5']
+    pH5 = json_data['answer6']
+    pH6 = json_data['answer7']
     #* Attitude To Exercise
-    activityLevel = json_data['ActivityLevel']
-    noActivity = json_data['NoActivity']
-    lowActivity = json_data['LowActivity']
-    highActivity = json_data['HighActivity']
+    activityLevel = json_data['activityLevel']
+    noActivity = json_data['noActivity']
+    lowActivity = json_data['nowActivity']
+    highActivity = json_data['highActivity']
     #* Personal History
-    diabetes = json_data['Diabetes']
-    hypertension = json_data['Hypertension']
-    heartDisease = json_data['HeartDisease']
-    kidneyDisease = json_data['KidneyDisease']
-    respiratoryDisease = json_data['RespiratoryDisease']
-    jointDisease = json_data['JointDisease']
-    allergies = json_data['Allergies']
-    hyperthyroidism = json_data['Hyperthyroidism']
-    hypothyroidism = json_data['Hypothyroidism']
-    otherDisease = json_data['OtherDisease']
-    surgicalInterventions = json_data['SurgicalInterventions'] 
-    fractures = json_data['Fractures']
-    hospitalization = json_data['Hospitalization']
+    diabetes = json_data['diabetes']
+    hypertension = json_data['hypertension']
+    heartDisease = json_data['heartDisease']
+    kidneyDisease = json_data['kidneyDisease']
+    respiratoryDisease = json_data['respiratoryDisease']
+    jointDisease = json_data['jointDisease']
+    allergies = json_data['allergies']
+    hyperthyroidism = json_data['hyperthyroidism']
+    hypothyroidism = json_data['hypothyroidism']
+    otherDisease = json_data['otherDisease']
+    surgicalInterventions = json_data['surgicalInterventions'] 
+    fractures = json_data['fractures']
+    hospitalization = json_data['hospitalization']
     #* Lifestyle
-    bath = json_data['Bath']
-    toothBrushing = json_data['ToothBrushing']
-    sharedRoom = json_data['SharedRoom']
-    tobaccoConsumption = json_data['TobaccoConsumption']
-    alcoholConsumption = json_data['AlcoholConsumption']
-    numberOfMeals = json_data['NumberOfMeals']
-    physicalActivity = json_data['PhysicalActivity']
+    bath = json_data['bath']
+    toothBrushing = json_data['toothBrushing']
+    sharedRoom = json_data['sharedRoom']
+    tobaccoConsumption = json_data['tobaccoConsumption']
+    alcoholConsumption = json_data['alcoholConsumption']
+    numberOfMeals = json_data['numberOfMeals']
+    physicalActivity = json_data['physicalActivity']
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     phS = (pH0+pH1+pH2+pH3+pH4+pH5+pH6)
