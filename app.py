@@ -32,8 +32,8 @@ mysql.init_app(app)
 @app.route('/apiECUME/login', methods=['GET'])
 def get_tokenLogin():
     json_data = request.get_json()
-    email = json_data['Email']
-    password = json_data['Password']
+    email = json_data['email']
+    password = json_data['password']
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute('SELECT token FROM User WHERE Email = %s AND Password = %s ;', (email,password))
