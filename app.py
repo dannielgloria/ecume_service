@@ -28,7 +28,15 @@ app.config['MYSQL_DATABASE_HOST'] = 'www.taquitosoftware.com.mx'
 
 mysql.init_app(app)
 
-#* This endpoint obtains the record by shaCotejo
+@app.route('/apiECUME/getAllUsers', methods=['GET'])
+def get_allUsers():
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    cur.execute('SELECT * FROM User')
+    rows = cur.fetchone()
+    resp = jsonify(rows)
+    resp.status_code=200
+    return resp
+
 @app.route('/apiECUME/login', methods=['POST'])
 def get_tokenLogin():
     json_data = request.get_json()
