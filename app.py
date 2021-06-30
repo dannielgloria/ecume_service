@@ -63,7 +63,8 @@ def get_recoverPassword():
     row = cur.fetchone()
     print (row)
     if row == 'None':
-        resp = {"error": "The email or number you entered is incorrect"}
+        print ('entro al if')
+        resp = '{"error": "The email or number you entered is incorrect"}'
         print (resp)
         resp = json.dumps(resp)
         print (resp)
