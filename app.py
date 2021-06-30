@@ -59,7 +59,7 @@ def get_recoverPassword():
     email = json_data['email']
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute('SELECT Password FROM User WHERE Phone = %s OR Email = %s;', (phone,))
+    cur.execute('SELECT Password FROM User WHERE Phone = %s OR Email = %s;', (phone,email))
     rows = cur.fetchall()
     resp = jsonify(rows)
     resp.status_code=200
