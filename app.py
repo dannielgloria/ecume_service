@@ -33,7 +33,7 @@ def get_allUsers():
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute('SELECT * FROM User')
-    rows = cur.fetchone()
+    rows = cur.fetchall()
     resp = jsonify(rows)
     resp.status_code=200
     return resp
