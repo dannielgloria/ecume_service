@@ -1,4 +1,5 @@
 import re
+import sys
 import json
 import random
 import pymysql
@@ -136,7 +137,11 @@ def put_userRegister():
     nD = (diabetes+hypertension+heartDisease+kidneyDisease+respiratoryDisease+jointDisease+allergies+hyperthyroidism+hypothyroidism+otherDisease)
     if ( ((phS == 0) and (fS >= 5 and fS <= 7)) and (nD >= 3)):
         group = 1
-        cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, trainingGroup) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
+        try:
+            cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, trainingGroup) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
+        except IntegityError as ie:
+            resp = {'error': 'The user has already been registered previously'}
+            return jsonify(resp), 400
         cur.execute('INSERT INTO Lifestyle (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity))
         cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
         cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
