@@ -47,9 +47,16 @@ def get_tokenLogin():
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute('SELECT token FROM User WHERE Email = %s AND Password = %s ;', (email,password))
     rows = cur.fetchone()
-    resp = jsonify(rows)
-    resp.status_code=200
-    return resp
+        rws = str(rows)
+        if rws == 'None':
+            resp = {"error": "The email or password are incorrect"}
+            resp.status_code=400
+            resp = json.dumps(resp)
+            return resp
+        else:
+            resp = jsonify(rows)
+            resp.status_code=200
+            return resp
 
 @app.route('/apiECUME/recoverPwd', methods=['GET'])
 def get_recoverPassword():
@@ -59,7 +66,7 @@ def get_recoverPassword():
     email = json_data['email']
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute('SELECT Password FROM User WHERE Phone = %s OR Email = %s;', (phone,email))
+    cur.execute('SELECT password FROM User WHERE Phone = %s OR Email = %s;', (phone,email))
     row = cur.fetchone()
     rw = str(row)
     if rw == 'None':
@@ -137,11 +144,19 @@ def put_userRegister():
         cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
         cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
         cur.execute('INSERT INTO PhysicalHandicap (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6))
+        cur.execute('SELECT token,email,trainingGroup FROM User WHERE Email = %s;', (email))
         conn.commit()
-        resp = jsonify(cur.rowcount)
-        resp.status_code=200
-        resp = 'User was successfully registered'
-        return resp
+        rows = cur.fetchone()
+        rws = str(rows)
+        if rws == 'None':
+            resp = {"error": "Something went wrong when registering the user"}
+            resp.status_code=400
+            resp = json.dumps(resp)
+            return resp
+        else:
+            resp = jsonify(rows)
+            resp.status_code=200
+            return resp
     elif (((phS == 0) and (fS >= 11 and fS <= 13)) and (nD >= 2 and nD <= 3)):
         group = 2
         cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, trainingGroup) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
@@ -149,11 +164,19 @@ def put_userRegister():
         cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
         cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
         cur.execute('INSERT INTO PhysicalHandicap (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6))
+        cur.execute('SELECT token,email,trainingGroup FROM User WHERE Email = %s;', (email))
         conn.commit()
-        resp = jsonify(cur.rowcount)
-        resp.status_code=200
-        resp = 'User was successfully registered'
-        return resp
+        rows = cur.fetchone()
+        rws = str(rows)
+        if rws == 'None':
+            resp = {"error": "Something went wrong when registering the user"}
+            resp.status_code=400
+            resp = json.dumps(resp)
+            return resp
+        else:
+            resp = jsonify(rows)
+            resp.status_code=200
+            return resp
     elif (((phS == 0) and (fS >= 15 and fS <= 18)) and (nD >= 2 and nD <= 3)):
         group = 3
         cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, trainingGroup) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
@@ -161,11 +184,19 @@ def put_userRegister():
         cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
         cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
         cur.execute('INSERT INTO PhysicalHandicap (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6))
+        cur.execute('SELECT token,email,trainingGroup FROM User WHERE Email = %s;', (email))
         conn.commit()
-        resp = jsonify(cur.rowcount)
-        resp.status_code=200
-        resp = 'User was successfully registered'
-        return resp
+        rows = cur.fetchone()
+        rws = str(rows)
+        if rws == 'None':
+            resp = {"error": "Something went wrong when registering the user"}
+            resp.status_code=400
+            resp = json.dumps(resp)
+            return resp
+        else:
+            resp = jsonify(rows)
+            resp.status_code=200
+            return resp
     elif (phS != 0):
         group = 4
         cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, trainingGroup) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
@@ -173,11 +204,19 @@ def put_userRegister():
         cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
         cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
         cur.execute('INSERT INTO PhysicalHandicap (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6))
+        cur.execute('SELECT token,email,trainingGroup FROM User WHERE Email = %s;', (email))
         conn.commit()
-        resp = jsonify(cur.rowcount)
-        resp.status_code=200
-        resp = 'User was successfully registered'
-        return resp
+        rows = cur.fetchone()
+        rws = str(rows)
+        if rws == 'None':
+            resp = {"error": "Something went wrong when registering the user"}
+            resp.status_code=400
+            resp = json.dumps(resp)
+            return resp
+        else:
+            resp = jsonify(rows)
+            resp.status_code=200
+            return resp
     else:
         group = 5
         cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, trainingGroup) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
@@ -185,11 +224,19 @@ def put_userRegister():
         cur.execute('INSERT INTO AttitudeToExercise (email, activityLevel, noActivity, lowActivity, highActivity) VALUES (%s, %s, %s, %s, %s);', (email, activityLevel, noActivity, lowActivity, highActivity))
         cur.execute('INSERT INTO PersonalHistory (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (email, diabetes, hypertension, heartDisease, kidneyDisease, respiratoryDisease, jointDisease, allergies, hyperthyroidism, hypothyroidism, otherDisease, surgicalInterventions, fractures, hospitalization))
         cur.execute('INSERT INTO PhysicalHandicap (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, pH0, pH1, pH2, pH3, pH4, pH5, pH6))
+        cur.execute('SELECT token,email,trainingGroup FROM User WHERE Email = %s;', (email))
         conn.commit()
-        resp = jsonify(cur.rowcount)
-        resp.status_code=200
-        resp = 'User was successfully registered'
-        return resp
+        rows = cur.fetchone()
+        rws = str(rows)
+        if rws == 'None':
+            resp = {"error": "Something went wrong when registering the user"}
+            resp.status_code=400
+            resp = json.dumps(resp)
+            return resp
+        else:
+            resp = jsonify(rows)
+            resp.status_code=200
+            return resp
     
 @app.route('/apiECUME/deleteUser', methods=['DELETE'])
 def delete_deleteUser():
