@@ -64,7 +64,9 @@ def get_recoverPassword():
     print (row)
     if row == 'None':
         resp = {"error": "The email or number you entered is incorrect"}
+        print (resp)
         resp = json.dumps(resp)
+        print (resp)
         return resp
     else:
         resp = jsonify(row)
