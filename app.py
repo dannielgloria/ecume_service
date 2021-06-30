@@ -50,8 +50,8 @@ def get_tokenLogin():
     rws = str(rows)
     if rws == 'None':
         resp = {"error": "The email or password are incorrect"}
-        resp.status_code=400
         resp = json.dumps(resp)
+        resp.status_code=400
         return resp
     else:
         resp = jsonify(rows)
@@ -150,8 +150,8 @@ def put_userRegister():
         rws = str(rows)
         if rws == 'None':
             resp = {"error": "Something went wrong when registering the user"}
-            resp.status_code=400
             resp = json.dumps(resp)
+            resp.status_code=400
             return resp
         else:
             resp = jsonify(rows)
@@ -170,8 +170,8 @@ def put_userRegister():
         rws = str(rows)
         if rws == 'None':
             resp = {"error": "Something went wrong when registering the user"}
-            resp.status_code=400
             resp = json.dumps(resp)
+            resp.status_code=400
             return resp
         else:
             resp = jsonify(rows)
@@ -190,8 +190,8 @@ def put_userRegister():
         rws = str(rows)
         if rws == 'None':
             resp = {"error": "Something went wrong when registering the user"}
-            resp.status_code=400
             resp = json.dumps(resp)
+            resp.status_code=400
             return resp
         else:
             resp = jsonify(rows)
@@ -210,8 +210,8 @@ def put_userRegister():
         rws = str(rows)
         if rws == 'None':
             resp = {"error": "Something went wrong when registering the user"}
-            resp.status_code=400
             resp = json.dumps(resp)
+            resp.status_code=400
             return resp
         else:
             resp = jsonify(rows)
@@ -230,8 +230,8 @@ def put_userRegister():
         rws = str(rows)
         if rws == 'None':
             resp = {"error": "Something went wrong when registering the user"}
-            resp.status_code=400
             resp = json.dumps(resp)
+            resp.status_code=400
             return resp
         else:
             resp = jsonify(rows)
