@@ -60,11 +60,12 @@ def get_recoverPassword():
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute('SELECT Password FROM User WHERE Phone = %s OR Email = %s;', (phone,email))
-    rows = cur.fetchall()
-    resp = jsonify(rows)
+    row = cur.fetchone()
+    resp = jsonify(row)
     resp.status_code=200
-    if resp == '[]':
-        resp = "Numero no encontrado"
+    if row == 'None':
+        resp = {"error": "The email or number you entered is incorrect"}
+        resp = json.dumps(resp)
         return resp
     else:
         return resp
