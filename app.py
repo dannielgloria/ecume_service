@@ -62,7 +62,7 @@ def get_recoverPassword():
     cur.execute('SELECT Password FROM User WHERE Phone = %s OR Email = %s;', (phone,email))
     row = cur.fetchone()
     rw = str(row)
-    print (row)
+    print (rw)
     if rw == 'None':
         print ('entro al if')
         resp = '{"error": "The email or number you entered is incorrect"}'
