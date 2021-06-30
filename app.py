@@ -139,7 +139,7 @@ def put_userRegister():
         group = 1
         try:
             cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, trainingGroup) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
-        except IntegityError as ie:
+        except pymysql.err.IntegrityError as ie:
             resp = {'error': 'The user has already been registered previously'}
             return jsonify(resp), 400
         cur.execute('INSERT INTO Lifestyle (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity))
@@ -197,7 +197,7 @@ def put_userRegister():
         group = 4
         try:
             cur.execute('INSERT INTO User (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, trainingGroup) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', (token, names, surnames, password, email, phone, height, weight, yearBirth, gender, bloodPressure, group))
-        except IntegrityError as ie:
+        except pymysql.err.IntegrityError as ie:
             resp = {'error': 'The user has already been registered previously'}
             return jsonify(resp), 400
         cur.execute('INSERT INTO Lifestyle (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);', (email, bath, toothBrushing, sharedRoom, tobaccoConsumption, alcoholConsumption, numberOfMeals, physicalActivity))
