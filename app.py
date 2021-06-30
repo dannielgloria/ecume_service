@@ -61,8 +61,9 @@ def get_recoverPassword():
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute('SELECT Password FROM User WHERE Phone = %s OR Email = %s;', (phone,email))
     row = cur.fetchone()
+    rw = str(row)
     print (row)
-    if row == 'None':
+    if rw == 'None':
         print ('entro al if')
         resp = '{"error": "The email or number you entered is incorrect"}'
         print (resp)
