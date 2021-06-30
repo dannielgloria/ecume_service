@@ -47,16 +47,16 @@ def get_tokenLogin():
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute('SELECT token FROM User WHERE Email = %s AND Password = %s ;', (email,password))
     rows = cur.fetchone()
-        rws = str(rows)
-        if rws == 'None':
-            resp = {"error": "The email or password are incorrect"}
-            resp.status_code=400
-            resp = json.dumps(resp)
-            return resp
-        else:
-            resp = jsonify(rows)
-            resp.status_code=200
-            return resp
+    rws = str(rows)
+    if rws == 'None':
+        resp = {"error": "The email or password are incorrect"}
+        resp.status_code=400
+        resp = json.dumps(resp)
+        return resp
+    else:
+        resp = jsonify(rows)
+        resp.status_code=200
+    return resp
 
 @app.route('/apiECUME/recoverPwd', methods=['GET'])
 def get_recoverPassword():
