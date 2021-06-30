@@ -68,9 +68,8 @@ def get_recoverPassword():
     row = cur.fetchone()
     rw = str(row)
     if rw == 'None':
-        resp = {"error": "The email or number you entered is incorrect"}
-        resp = json.dumps(resp)
-        return resp
+        resp = {'error': 'The email or number you entered is incorrect'}
+        return jsonify(resp), 400
     else:
         resp = jsonify(row)
         resp.status_code=200
@@ -240,9 +239,8 @@ def delete_deleteUser():
     conn.commit()
     resp = jsonify(cur.rowcount)
     resp.status_code=200
-    resp = {"response": "User was successfully deleted"}
-    resp = json.dumps(resp)
-    return resp
+    resp = {'response': 'User was successfully deleted'}
+    return jsonify(resp)
 
 if __name__ == '__main__':
     app.run(port=PORT, debug=DEBUG)
