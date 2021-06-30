@@ -61,13 +61,14 @@ def get_recoverPassword():
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute('SELECT Password FROM User WHERE Phone = %s OR Email = %s;', (phone,email))
     row = cur.fetchone()
-    resp = jsonify(row)
-    resp.status_code=200
+    print (row)
     if row == 'None':
         resp = {"error": "The email or number you entered is incorrect"}
         resp = json.dumps(resp)
         return resp
     else:
+        resp = jsonify(row)
+        resp.status_code=200
         return resp
     
 
