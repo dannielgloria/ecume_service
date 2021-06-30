@@ -45,15 +45,16 @@ def get_tokenLogin():
 @app.route('/apiECUME/recoverPwd', methods=['GET'])
 def get_recoverPassword():
     json_data = request.get_json()
-    phone = json_data['Phone']
+    phone = json_data['phone']
     phone = re.sub(r"[a-zA-Z . +-]+", "" ,phone)
+    email = json_data['email']
     conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    cur.execute('SELECT Password FROM User WHERE Phone = %s ;', (phone))
+    cur.execute('SELECT Password FROM User WHERE Phone = %s OR Email = %s;', (phone,))
     rows = cur.fetchall()
     resp = jsonify(rows)
     resp.status_code=200
-    if resp == '[ ]':
+    if resp == '[]':
         resp = "Numero no encontrado"
         return resp
     else:
@@ -193,7 +194,8 @@ def delete_deleteUser():
     conn.commit()
     resp = jsonify(cur.rowcount)
     resp.status_code=200
-    resp = 'User was successfully deleted'
+    resp = {"response": "User was successfully deleted"}
+    resp = json.dumps(resp)
     return resp
 
 if __name__ == '__main__':
