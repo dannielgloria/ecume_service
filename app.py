@@ -30,6 +30,7 @@ mysql.init_app(app)
 
 @app.route('/apiECUME/getAllUsers', methods=['GET'])
 def get_allUsers():
+    conn = mysql.connect()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     cur.execute('SELECT * FROM User')
     rows = cur.fetchone()
