@@ -49,10 +49,8 @@ def get_tokenLogin():
     rows = cur.fetchone()
     rws = str(rows)
     if rws == 'None':
-        resp = {"error": "The email or password are incorrect"}
-        resp = json.dumps(resp)
-        resp.status_code=400
-        return resp
+        resp = {'error': 'The email or password are incorrect'}
+        return jsonify(resp), 400
     else:
         resp = jsonify(rows)
         resp.status_code=200
@@ -149,10 +147,8 @@ def put_userRegister():
         rows = cur.fetchone()
         rws = str(rows)
         if rws == 'None':
-            resp = {"error": "Something went wrong when registering the user"}
-            resp = json.dumps(resp)
-            resp.status_code=400
-            return resp
+            resp = {'error': 'Something went wrong when registering the user'}
+            return jsonify(resp), 400
         else:
             resp = jsonify(rows)
             resp.status_code=200
@@ -169,10 +165,8 @@ def put_userRegister():
         rows = cur.fetchone()
         rws = str(rows)
         if rws == 'None':
-            resp = {"error": "Something went wrong when registering the user"}
-            resp = json.dumps(resp)
-            resp.status_code=400
-            return resp
+            resp = {'error': 'Something went wrong when registering the user'}
+            return jsonify(resp), 400
         else:
             resp = jsonify(rows)
             resp.status_code=200
@@ -189,10 +183,8 @@ def put_userRegister():
         rows = cur.fetchone()
         rws = str(rows)
         if rws == 'None':
-            resp = {"error": "Something went wrong when registering the user"}
-            resp = json.dumps(resp)
-            resp.status_code=400
-            return resp
+            resp = {'error': 'Something went wrong when registering the user'}
+            return jsonify(resp), 400
         else:
             resp = jsonify(rows)
             resp.status_code=200
@@ -209,10 +201,8 @@ def put_userRegister():
         rows = cur.fetchone()
         rws = str(rows)
         if rws == 'None':
-            resp = {"error": "Something went wrong when registering the user"}
-            resp = json.dumps(resp)
-            resp.status_code=400
-            return resp
+            resp = {'error': 'Something went wrong when registering the user'}
+            return jsonify(resp), 400
         else:
             resp = jsonify(rows)
             resp.status_code=200
@@ -229,10 +219,8 @@ def put_userRegister():
         rows = cur.fetchone()
         rws = str(rows)
         if rws == 'None':
-            resp = {"error": "Something went wrong when registering the user"}
-            resp = json.dumps(resp)
-            resp.status_code=400
-            return resp
+            resp = {'error': 'Something went wrong when registering the user'}
+            return jsonify(resp), 400
         else:
             resp = jsonify(rows)
             resp.status_code=200
